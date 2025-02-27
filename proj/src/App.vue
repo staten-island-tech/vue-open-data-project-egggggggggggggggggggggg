@@ -1,4 +1,5 @@
 <template>
+  <div id="map" style="height:500px; width:100%"></div>
   <div v-for="item in arrestData" :key="item.arrest_key"
   :style="
   {
@@ -14,6 +15,8 @@
 
 <script setup>
   import { onMounted, ref } from 'vue';
+  import L from "leaflet";
+  import "leaflet/dist/leaflet.css";
   const arrestData =  ref('');
   async function getData()
   {
@@ -25,6 +28,14 @@
   {
     getData();
     console.log(arrestData)
+    const map = L.map("map").setView([40.7128, -74.0060], 12); // NYC coords
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
+    L.marker([40.7128, -74.0060])
+      .addTo(map)
+      .bindPopup("Hello, NYC!")
+      .openPopup();
   })
   console.log("testicle")
   //data format
