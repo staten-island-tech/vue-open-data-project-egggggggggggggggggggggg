@@ -1,12 +1,11 @@
 <template>
   <div id="map" style="height:500px; width:100%"></div>
-  <div v-for="item in arrestData" :key="item.arrest_key"
+  <div v-for="(item, index) in arrestData" :key="index"
   :style="
   {
     width:`500px`,
     margin:`100px`
   }">
-    {{ item.pd_desc }}
     {{ item }}
   </div>
 </template>
@@ -18,11 +17,30 @@
   import L from "leaflet";
   import "leaflet/dist/leaflet.css";
   const arrestData =  ref('');
+  const testlink =  `https://data.cityofnewyork.us/resource/8h9b-rp9u.json?$select=perp_sex`
+  let Mcounter= 0;
+  let Fcounter= 0;
+
   async function getData()
   {
-    const fetchedData = await fetch("https://data.cityofnewyork.us/resource/8h9b-rp9u.json")
+    const fetchedData = await fetch(testlink)
     const jsonedData =  await fetchedData.json();
     arrestData.value = jsonedData;
+    const start=performance.now();
+    jsonedData.forEach(item=>
+      {
+        if(item.perp_sex=="M")
+        {
+          Mcounter+=1; 
+        }
+        else if(item.perp_sex=="F")
+        {
+          Fcounter+=1;
+        }
+      }
+    )
+    console.log(Fcounter, Mcounter);
+    console.log(performance.now()-start)
   }
   onMounted(()=>
   {
@@ -37,6 +55,16 @@
       .bindPopup("Hello, NYC!")
       .openPopup();
   })
+
+  function start()
+  {
+    
+  }
+  function queryDB(col, value)
+  {
+    return `https://data.cityofnewyork.us/resource/8h9b-rp9u.json$${col}=${value}`
+  }
+
   console.log("testicle")
   //data format
   
@@ -62,7 +90,7 @@
     "longitude": "-73.909161",
     "lon_lat": {
       "type": "Point",
-      "coordinates": [-73.909161, 40.66729]
+      "coordinates": [-73.909161, 40.66729]//invert this
     },
     ":@computed_region_efsh_h5xi": "17614",
     ":@computed_region_f5dn_yrer": "55",
