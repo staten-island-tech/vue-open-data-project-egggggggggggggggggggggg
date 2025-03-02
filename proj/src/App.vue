@@ -1,13 +1,10 @@
 <template>
   <div id="map" style="height:500px; width:100%"></div>
-  <div v-for="(item, index) in arrestData" :key="index"
-  :style="
-  {
-    width:`500px`,
-    margin:`100px`
-  }">
-    {{ item }}
-  </div>
+  <form>
+    <select value="arrest_key">Arrest ID</select>
+    <select value="=arrest_data">Date</select>
+    <select></select>
+  </form>
 </template>
 
 
@@ -16,18 +13,29 @@
   import { onMounted, ref } from 'vue';
   import L from "leaflet";
   import "leaflet/dist/leaflet.css";
-  const arrestData =  ref('');
-  const testlink =  `https://data.cityofnewyork.us/resource/8h9b-rp9u.json?$select=perp_sex`
+  const aggregateData = {
+
+  }
+  const testlink =  `https://data.cityofnewyork.us/resource/uip8-fykc.json?$select=perp_sex&$order=arrest_key`
   let Mcounter= 0;
   let Fcounter= 0;
-
-  async function getData()
+  async function test()
   {
-    const fetchedData = await fetch(testlink)
-    const jsonedData =  await fetchedData.json();
-    arrestData.value = jsonedData;
-    const start=performance.now();
-    jsonedData.forEach(item=>
+    let entries = 0;
+    let start=performance.now()
+    while(true)
+    {
+      const newLink = queryDBLink({
+        offset:entries,
+        order:"arrest_key",
+      })
+      const fData =  await fetch(newLink);
+      const jData = await fData.json();
+      if(jData.length==0)
+      {
+        break
+      }
+      jData.forEach(item=>
       {
         if(item.perp_sex=="M")
         {
@@ -37,32 +45,91 @@
         {
           Fcounter+=1;
         }
-      }
-    )
+      })
+      entries+=1000;//offset by 1000
+    }
     console.log(Fcounter, Mcounter);
     console.log(performance.now()-start)
+  }
+  async function fetchData(url)
+  {
+    const newLink = await fetch(url);
+    const jData =  await newLink.json();
+    return jData;
+  }
+
+  async function getData()
+  {
+    let start = performance.now();
+    let Mcounter = 0;
+    let Fcounter=0;
+    const counter = { M:0, F:0};
+    const dbLength = Number((await fetchData("https://data.cityofnewyork.us/resource/uip8-fykc.json?$select=count(*)"))[0].count);
+    let promises =  Array.from({ length: Math.ceil(dbLength/1000)}, (_,i)=>
+    {
+        const newLink =  queryDBLink(
+          {
+            offset: i*1000,
+            order: "arrest_key"
+          });
+          return fetch(newLink).then(response=>response.json());
+    })
+    let results  =  await Promise.all(promises);
+    console.log(`Retrieving Data took ${performance.now()-start}`)
+    for(const jData of results)
+    {
+      if(jData.length==0)
+      {
+        return;
+      }
+      jData.forEach(item => {
+        counter[item.perp_sex] = (counter[item.perp_sex] || 0) + 1;
+      });
+    }
+    console.log(`Took ${Math.floor(performance.now()-start)} ms to complete`);
+    console.log(counter);
+
+
   }
   onMounted(()=>
   {
     getData();
-    console.log(arrestData)
-    const map = L.map("map").setView([40.7128, -74.0060], 12); // NYC coords
+    const map = L.map("map").setView([40.792195123000056, -73.93819514199998], 12); // NYC coords
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
-    L.marker([40.7128, -74.0060])
+    L.marker([40.792195123000056, -73.93819514199998])
       .addTo(map)
       .bindPopup("Hello, NYC!")
       .openPopup();
   })
 
-  function start()
+  async function start()
   {
-    
+    let error = false;
+    while(true)
+    {
+      const fetchData = (await fetch(testlink)).json();
+      
+    }
   }
-  function queryDB(col, value)
+  const queryDBexamples =
   {
-    return `https://data.cityofnewyork.us/resource/8h9b-rp9u.json$${col}=${value}`
+    $offset:"offset",    
+
+
+  }
+
+
+
+  function queryDBLink(searchParams)//obj containing SOQL method and the value or smth
+  {
+    let baseURL = `https://data.cityofnewyork.us/resource/uip8-fykc.json?`
+    for(const [key, value] of Object.entries(searchParams))
+    {
+      baseURL+=`$${key}=${value}&`
+    }
+    return baseURL;
   }
 
   console.log("testicle")
@@ -98,7 +165,10 @@
     ":@computed_region_92fq_4b7q": "17",
     ":@computed_region_sbqj_enih": "46"
   }
-
+  function delay(ms)//Delay function utilizing promise
+{
+    return new Promise(resolve=>setTimeout(resolve, ms))
+}
 
 </script>
 
