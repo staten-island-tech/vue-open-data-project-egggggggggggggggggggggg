@@ -5,6 +5,7 @@
     <select value="=arrest_data">Date</select>
     <select></select>
   </form>
+  <Doughnut :data="data"></Doughnut>
 </template>
 
 
@@ -13,9 +14,7 @@
   import { onMounted, ref } from 'vue';
   import L from "leaflet";
   import "leaflet/dist/leaflet.css";
-  const aggregateData = {
-
-  }
+  import { Doughnut } from 'vue-chartjs';
   const testlink =  `https://data.cityofnewyork.us/resource/uip8-fykc.json?$select=perp_sex&$order=arrest_key`
   let Mcounter= 0;
   let Fcounter= 0;
@@ -51,46 +50,45 @@
     console.log(Fcounter, Mcounter);
     console.log(performance.now()-start)
   }
+  const data = {
+    labels:["Male", "Female"],
+    datasets:[
+    {
+      backgroundColor:["#FF0000","#0000FF"],
+      data:[1000, 100]
+    }]
+  }
+
+
   async function fetchData(url)
   {
     const newLink = await fetch(url);
     const jData =  await newLink.json();
     return jData;
   }
-
   async function getData()
   {
-    let start = performance.now();
-    let Mcounter = 0;
-    let Fcounter=0;
-    const counter = { M:0, F:0};
+    const start =  performance.now();
+    const counter = {M:0,F:0};
     const dbLength = Number((await fetchData("https://data.cityofnewyork.us/resource/uip8-fykc.json?$select=count(*)"))[0].count);
-    let promises =  Array.from({ length: Math.ceil(dbLength/1000)}, (_,i)=>
-    {
-        const newLink =  queryDBLink(
-          {
-            offset: i*1000,
-            order: "arrest_key"
-          });
-          return fetch(newLink).then(response=>response.json());
-    })
-    let results  =  await Promise.all(promises);
-    console.log(`Retrieving Data took ${performance.now()-start}`)
-    for(const jData of results)
-    {
-      if(jData.length==0)
+    console.log(dbLength)
+    const newLink = queryDBLink(
       {
-        return;
+        limit:dbLength,
+        select:"perp_sex"
       }
-      jData.forEach(item => {
+    ) 
+    const newData =  await fetchData(newLink);
+    newData.forEach(item=>
+      {
         counter[item.perp_sex] = (counter[item.perp_sex] || 0) + 1;
-      });
-    }
-    console.log(`Took ${Math.floor(performance.now()-start)} ms to complete`);
-    console.log(counter);
-
-
+      }
+    )
+    console.log(`Took : ${Math.floor(performance.now()-start)}`);
+    console.log(counter)
   }
+
+
   onMounted(()=>
   {
     getData();
@@ -104,21 +102,6 @@
       .openPopup();
   })
 
-  async function start()
-  {
-    let error = false;
-    while(true)
-    {
-      const fetchData = (await fetch(testlink)).json();
-      
-    }
-  }
-  const queryDBexamples =
-  {
-    $offset:"offset",    
-
-
-  }
 
 
 
