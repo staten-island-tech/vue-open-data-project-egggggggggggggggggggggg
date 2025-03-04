@@ -5,58 +5,72 @@
     <select value="=arrest_data">Date</select>
     <select></select>
   </form>
-  <Doughnut :data="data"></Doughnut>
 </template>
 
 
 
 <script setup>
   import { onMounted, ref } from 'vue';
+  import { delay } from './utils';
   import L from "leaflet";
   import "leaflet/dist/leaflet.css";
-  import { Doughnut } from 'vue-chartjs';
-  const testlink =  `https://data.cityofnewyork.us/resource/uip8-fykc.json?$select=perp_sex&$order=arrest_key`
-  let Mcounter= 0;
-  let Fcounter= 0;
-  async function test()
+  const offenses = {}
+  const counter = {M:0,F:0}
+  const commonData =  {
+    "arrest_date": "2024-01-01T00:00:00.000",
+    "pd_cd": "792",
+    "pd_desc": "CRIMINAL POSSESSION WEAPON",
+    "ky_cd": "118",
+    "ofns_desc": "DANGEROUS WEAPONS",
+    "law_cat_cd": {},
+    "arrest_boro": {},
+    "arrest_precinct": {},
+    "jurisdiction_code": {},
+    "age_group": {},
+    "perp_sex": {},
+    "perp_race": {}
+  }//data to check
+  //parse data for the stuff using Object.value() and Object.keys()
+  //example
+  //export const data = {
+  //   labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
+  //   datasets: [
+  //     {
+  //       backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+  //       data: [40, 20, 80, 10]
+  //     }
+  //   ]
+  // }
+
+
+
+
+
+  function parseCrimes(pd_desc)
   {
-    let entries = 0;
-    let start=performance.now()
-    while(true)
-    {
-      const newLink = queryDBLink({
-        offset:entries,
-        order:"arrest_key",
-      })
-      const fData =  await fetch(newLink);
-      const jData = await fData.json();
-      if(jData.length==0)
+    pd_desc.split(",").forEach(
+      crime=>
       {
-        break
+        if(!offenses[crime])
+        {
+          offenses[crime] = 1;
+          return;
+        }
+        else
+        {
+          offenses[crime] += 1;
+        }
       }
-      jData.forEach(item=>
-      {
-        if(item.perp_sex=="M")
-        {
-          Mcounter+=1; 
-        }
-        else if(item.perp_sex=="F")
-        {
-          Fcounter+=1;
-        }
-      })
-      entries+=1000;//offset by 1000
-    }
-    console.log(Fcounter, Mcounter);
-    console.log(performance.now()-start)
+    )
   }
-  const data = {
-    labels:["Male", "Female"],
-    datasets:[
+  function commonDataCondense(dataKey , dataVal) //anything without a comma=valide
+  {
+    if(!commonData[dataKey][dataVal])
     {
-      backgroundColor:["#FF0000","#0000FF"],
-      data:[1000, 100]
-    }]
+      commonData[dataKey][dataVal]=1;
+      return;
+    }
+    commonData[dataKey][dataVal] +=1;
   }
 
 
@@ -69,24 +83,26 @@
   async function getData()
   {
     const start =  performance.now();
-    const counter = {M:0,F:0};
     const dbLength = Number((await fetchData("https://data.cityofnewyork.us/resource/uip8-fykc.json?$select=count(*)"))[0].count);
     console.log(dbLength)
     const newLink = queryDBLink(
       {
-        limit:dbLength,
-        select:"perp_sex"
+        limit:100,
       }
-    ) 
+    )
     const newData =  await fetchData(newLink);
     newData.forEach(item=>
       {
-        counter[item.perp_sex] = (counter[item.perp_sex] || 0) + 1;
+        for(const [key,value] of Object.entries(item))
+        {
+          commonDataCondense(key, value)
+        }
       }
     )
     console.log(`Took : ${Math.floor(performance.now()-start)}`);
     console.log(counter)
   }
+
 
 
   onMounted(()=>
@@ -114,45 +130,6 @@
     }
     return baseURL;
   }
-
-  console.log("testicle")
-  //data format
-  
-
-  const EXAMPLEDATA = {
-    "arrest_key": "279752532",
-    "arrest_date": "2023-12-31T00:00:00.000",
-    "pd_cd": "792",
-    "pd_desc": "CRIMINAL POSSESSION WEAPON",
-    "ky_cd": "118",
-    "ofns_desc": "DANGEROUS WEAPONS",
-    "law_code": "PL 2651B01",
-    "law_cat_cd": "F",
-    "arrest_boro": "K",
-    "arrest_precinct": "73",
-    "jurisdiction_code": "2",
-    "age_group": "25-44",
-    "perp_sex": "M",
-    "perp_race": "BLACK",
-    "x_coord_cd": "1009450",
-    "y_coord_cd": "182401",
-    "latitude": "40.66729",
-    "longitude": "-73.909161",
-    "lon_lat": {
-      "type": "Point",
-      "coordinates": [-73.909161, 40.66729]//invert this
-    },
-    ":@computed_region_efsh_h5xi": "17614",
-    ":@computed_region_f5dn_yrer": "55",
-    ":@computed_region_yeji_bk3q": "2",
-    ":@computed_region_92fq_4b7q": "17",
-    ":@computed_region_sbqj_enih": "46"
-  }
-  function delay(ms)//Delay function utilizing promise
-{
-    return new Promise(resolve=>setTimeout(resolve, ms))
-}
-
 </script>
 
 <style scoped>
