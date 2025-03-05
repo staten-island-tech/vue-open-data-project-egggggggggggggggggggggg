@@ -1,26 +1,26 @@
 <template>
-  <div id="map" style="height:500px; width:100%"></div>
   <form>
     <select value="arrest_key">Arrest ID</select>
     <select value="=arrest_data">Date</select>
-    <select></select>
+    <select value="somethingSomething">EGG</select>
   </form>
+  <Doughnut :data="chartData" :options="chartOptions"></Doughnut>
 </template>
 
 
 
 <script setup>
-  import { onMounted, ref } from 'vue';
+  import { onMounted, ref, reactive } from 'vue';
   import { delay } from './utils';
-  import L from "leaflet";
-  import "leaflet/dist/leaflet.css";
+  import { Doughnut } from 'vue-chartjs';
+  import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
+  ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
+
+
   const offenses = {}
-  const counter = {M:0,F:0}
   const commonData =  {
     "arrest_date": "2024-01-01T00:00:00.000",
-    "pd_cd": "792",
     "pd_desc": "CRIMINAL POSSESSION WEAPON",
-    "ky_cd": "118",
     "ofns_desc": "DANGEROUS WEAPONS",
     "law_cat_cd": {},
     "arrest_boro": {},
@@ -28,8 +28,44 @@
     "jurisdiction_code": {},
     "age_group": {},
     "perp_sex": {},
-    "perp_race": {}
+    "perp_race": {},
+    "arrest_key": {},
+    "arrest_date":{},
+    "pd_cd":{},
+    "pd_desc":{},
+    "ky_cd":{},
+    "ofns_desc":{},
+    "law_code":{},
   }//data to check
+  const chartData = reactive({
+    labels: ['Red', 'Blue', 'Yellow'],
+    datasets: [
+      {
+        label: 'My Dataset',
+        data: [300, 50, 100],
+        backgroundColor: ['#FF0000', '#0000FF', '#FFFF00'],
+        hoverOffset: 4, 
+      },
+    ],
+  });
+  const chartOptions = reactive({
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            return `${tooltipItem.label}: ${tooltipItem.raw}`;
+          },
+        },
+      },
+    },
+  });
+
+
+
   //parse data for the stuff using Object.value() and Object.keys()
   //example
   //export const data = {
@@ -41,10 +77,7 @@
   //     }
   //   ]
   // }
-
-
-
-
+  //usable info :  arrest_dates, ofns_desc, pd_desc, law_cat_cd(Felony, Misdeamenor, Violation), arrest_boro, arrest_precinct, jurisdiction_code, age_group, perp_sex, perp_race, 
 
   function parseCrimes(pd_desc)
   {
@@ -63,8 +96,19 @@
       }
     )
   }
-  function commonDataCondense(dataKey , dataVal) //anything without a comma=valide
+  function commonDataCondense(dk , dv) //anything without a comma=valide
   {
+    const dataKey = dk.toString();
+    if(!commonData[dataKey])
+    {
+      return
+    }
+    if(dataKey=="pd_desc")
+    {
+      parseCrimes(dv);
+      return;
+    }
+    const dataVal = dv.toString();
     if(!commonData[dataKey][dataVal])
     {
       commonData[dataKey][dataVal]=1;
@@ -72,8 +116,6 @@
     }
     commonData[dataKey][dataVal] +=1;
   }
-
-
   async function fetchData(url)
   {
     const newLink = await fetch(url);
@@ -87,7 +129,7 @@
     console.log(dbLength)
     const newLink = queryDBLink(
       {
-        limit:100,
+        limit:1000,
       }
     )
     const newData =  await fetchData(newLink);
@@ -100,28 +142,14 @@
       }
     )
     console.log(`Took : ${Math.floor(performance.now()-start)}`);
-    console.log(counter)
+    console.log(commonData,offenses)
   }
-
-
-
   onMounted(()=>
   {
     getData();
-    const map = L.map("map").setView([40.792195123000056, -73.93819514199998], 12); // NYC coords
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; OpenStreetMap contributors",
-    }).addTo(map);
-    L.marker([40.792195123000056, -73.93819514199998])
-      .addTo(map)
-      .bindPopup("Hello, NYC!")
-      .openPopup();
+
   })
-
-
-
-
-  function queryDBLink(searchParams)//obj containing SOQL method and the value or smth
+  function queryDBLink(searchParams)
   {
     let baseURL = `https://data.cityofnewyork.us/resource/uip8-fykc.json?`
     for(const [key, value] of Object.entries(searchParams))
