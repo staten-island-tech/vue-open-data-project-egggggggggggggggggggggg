@@ -1,8 +1,12 @@
 <template>
   <form>
-    <select value="arrest_key">Arrest ID</select>
-    <select value="=arrest_data">Date</select>
-    <select value="somethingSomething">EGG</select>
+    <select v-model="dataType">
+      <option value="perp_race">Sort by Race</option>
+      <option value="perp_sex">Sort by Sex</option>
+      <option value="perp_boro">Sort by Borough</option>
+      <option value="perp_race">Sort by Race</option>
+      <option value="perp_race">Sort by Race</option>
+    </select>
   </form>
   <Doughnut :data="chartData" :options="chartOptions" :key="testKey"></Doughnut>
 </template>
@@ -17,7 +21,7 @@
   ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 
   const testKey = ref(0);
-
+  const dataType = ref("");
   const offenses = {}
   const commonData =  {
     "arrest_date": "2024-01-01T00:00:00.000",
@@ -46,6 +50,7 @@
         data: [300, 50, 100, 1000],
         backgroundColor: ['#FF0000', '#0000FF', '#FFFF00', '#110020'],
         hoverOffset: 4, 
+        borderColor: 'rgba(255,255,255,255)'
       },
     ],
   });
@@ -68,8 +73,10 @@
   function changeData(dType)
   {
     //implement some sort of data changing thingie majingie here based on data type
-
-
+    if(dType=="arrest_date")
+    {
+      
+    }
     const data = Object.values(commonData[dType]);
     const labels = Object.keys(commonData[dType]);  
     console.log(data, labels)
@@ -140,7 +147,11 @@
       parseCrimes(dv);
       return;
     }
-    const dataVal = dv.toString();
+    let dataVal = dv.toString();
+    if(dataKey="arrest_date")
+    {
+      dataVal = dataVal.split('T')
+    }
     if(!commonData[dataKey][dataVal])
     {
       commonData[dataKey][dataVal]=1;
@@ -165,7 +176,7 @@
     console.log(dbLength)
     const newLink = queryDBLink(
       {
-        limit:1000,
+        limit:100,
       }
     )
     const newData =  await fetchData(newLink);
@@ -183,7 +194,7 @@
   async function test()
   {
     await getData();
-    changeData("ofns_desc");
+    changeData("arrest_boro");
     testKey.value+=1;
   }
   onMounted(()=>
