@@ -8,7 +8,7 @@
       <option value="perp_race">Sort by Race</option>
     </select>
   </form>
-  <Doughnut :data="chartData" :options="chartOptions" :key="testKey"></Doughnut>
+  <Doughnut :v-if="loadDoughnut" :data="chartData" :options="chartOptions" :key="testKey"></Doughnut>
 </template>
 
 
@@ -23,8 +23,9 @@
   const testKey = ref(0);
   const dataType = ref("");
   const offenses = {}
+  const loadDoughnut = ref(false);
   const commonData =  {
-    "arrest_date": "2024-01-01T00:00:00.000",
+    "arrest_date": {},
     "pd_desc": "CRIMINAL POSSESSION WEAPON",
     "ofns_desc": "DANGEROUS WEAPONS",
     "law_cat_cd": {},
@@ -148,16 +149,24 @@
       return;
     }
     let dataVal = dv.toString();
-    if(dataKey="arrest_date")
+    if(dataKey=="arrest_date")
     {
-      dataVal = dataVal.split('T')
-    }
-    if(!commonData[dataKey][dataVal])
-    {
-      commonData[dataKey][dataVal]=1;
+      dataVal = dataVal.split('T')[0].split('-');
+      console.log(dataVal)
+      const year = `Year: ${dataVal[0]}`;
+      const month =  `Month: ${dataVal[1]}`;
+      const day =  `Day: ${dataVal[2]}`;
+      commonData[dataKey][year] = (commonData[dataKey][year] || 0) + 1;
+      commonData[dataKey][month] = (commonData[dataKey][month] || 0) + 1;
+      commonData[dataKey][day] = (commonData[dataKey][day] || 0) + 1;
       return;
     }
-    commonData[dataKey][dataVal] +=1;
+    if(dataKey=="arrest_key"){return}
+    commonData[dataKey][dataVal] = (commonData[dataKey][dataVal] || 0) + 1;
+  }
+  function checkValidity(dataKey, dataVal)
+  {
+    //idk for commonDateCOndense
   }
   async function fetchData(url)
   {
@@ -195,6 +204,8 @@
   {
     await getData();
     changeData("arrest_boro");
+    if(!loadDoughnut){return}
+    
     testKey.value+=1;
   }
   onMounted(()=>
