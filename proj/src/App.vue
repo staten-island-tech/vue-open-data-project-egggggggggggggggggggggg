@@ -1,6 +1,11 @@
 <template>
+  <nav>
+    <router-link to="/heatmap">Ligma</router-link>
+    <router-link to="/timeline">Ligma</router-link>
+    <router-link to="/chartdata">Ligma</router-link>
+  </nav>
   <div class="stuff">
-    <OptionsMenu></OptionsMenu>
+    <OptionsMenu @eggsandwhich="printLigma" @ligma="" @sigma="printLigma"></OptionsMenu>
     <ProcessData class="size"></ProcessData>
   </div>
 
@@ -9,6 +14,10 @@
 <script setup>
 import OptionsMenu from './components/OptionsMenu.vue';
 import ProcessData from './components/ProcessData.vue';
+function printLigma()
+{
+  console.log("Ligma")
+}
 
 
 </script>
@@ -21,4 +30,9 @@ import ProcessData from './components/ProcessData.vue';
     padding-left: 10px;
     padding-right: 10px;
   } 
+  router-link
+  {
+    width:100px;
+    height:100px;
+  }
 </style>
