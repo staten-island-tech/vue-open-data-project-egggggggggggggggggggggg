@@ -1,13 +1,11 @@
 <template>
-    <div>
-    you have ligma
-    </div>
-    </template>
     
-    <script setup>
+</template>
     
-    </script>
-    
-    <style scoped>
-    
-    </style>
+<script setup>
+
+</script>
+
+<style scoped>
+
+</style>

@@ -14,6 +14,12 @@
 
 
 <script setup>
+//file for aggregating data
+//use this file to pull the data needed to update visual changes for the user
+//time line = show the rate of crime per specified m||d||y
+//heatmap = map showing where crime is most common, possibly aggregate the values by a given zone
+
+
   import { onMounted, ref, reactive } from 'vue';
   import { Doughnut } from 'vue-chartjs';
   import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
