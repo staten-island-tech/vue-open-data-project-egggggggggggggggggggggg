@@ -1,13 +1,13 @@
 <template>
   <div class="navBar">
     <nav>
-      <div class="navOpt">
+      <div class="navOpt" @click="$emit(`heatmap`,commonData)">
         <router-link to="/heatmap">Heatmap</router-link>
       </div>
-      <div class="navOpt">
+      <div class="navOpt" @click="$emit(`timeline`,commonData)"> 
         <router-link to="/timeline">TimeLine</router-link>
       </div>
-      <div class="navOpt">
+      <div class="navOpt" @click="$emit(`chartData`, commonData)">
         <router-link to="/chartdata">ChartData</router-link>
       </div>
     </nav>
@@ -15,18 +15,16 @@
 
     </router-view>
   </div>
-
 </template>
 
 <script setup>
 //file for aggregating data
 //use this file to pull the data needed to update visual changes for the user
 
-import { onMounted, ref, reactive } from 'vue';
-  import { Doughnut } from 'vue-chartjs';
+  import { onMounted, ref, reactive } from 'vue';
   import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
   ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
-
+  import { delay, HSLtoRGB, uniqueColors, RGBtoHex, queryDBLink } from './utils.js'
   const testKey = ref(0);
   const dataType = ref("");
   const offenses = {}
@@ -97,37 +95,6 @@ import { onMounted, ref, reactive } from 'vue';
     chartData.datasets[0].backgroundColor = uniqueColors(data.length);
     console.log(chartData)
   }
-  function uniqueColors(numOfColors)
-  { 
-    const colors =  [];
-    for(let i = 0; i<numOfColors; i++)
-    {
-      const hue = (i*360)/ numOfColors;
-      colors.push(RGBtoHex(HSLtoRGB(hue, .9, .5)));
-    }
-    return colors;
-  }
-  function HSLtoRGB(h,s,l)
-  {
-    const chroma = (1-Math.abs(2*l-1))*s;
-    const h2 = (h/60);
-    const x = chroma * (1-Math.abs(h2%2-1));
-    const m =  l-(chroma/2);
-    const rgbMap = [
-      [chroma, x, 0],
-      [x, chroma, 0],
-      [0, chroma, x],
-      [0, x, chroma],
-      [x, 0, chroma],
-      [chroma, 0, x]
-    ];
-    let [r,g,b] = rgbMap[Math.floor(h2%6)];
-    return [Math.round(((r+m)*255)),Math.round(((g+m)*255)),Math.round(((b+m)*255))];
-  }
-  function RGBtoHex(rgb)
-  {
-    return `#${rgb[2].toString(16).padStart(2,"0")}${rgb[1].toString(16).padStart(2,"0")}${rgb[0].toString(16).padStart(2,"0")}`
-  }
   //usable info :  arrest_dates, ofns_desc, pd_desc, law_cat_cd(Felony, Misdeamenor, Violation), arrest_boro, arrest_precinct, jurisdiction_code, age_group, perp_sex, perp_race, 
 
   function parseCrimes(pd_desc)
@@ -175,10 +142,6 @@ import { onMounted, ref, reactive } from 'vue';
     if(dataKey=="arrest_key"){return}
     commonData[dataKey][dataVal] = (commonData[dataKey][dataVal] || 0) + 1;
   }
-  function checkValidity(dataKey, dataVal)
-  {
-    //idk for commonDateCOndense
-  }
   async function fetchData(url)
   {
     const newLink = await fetch(url);
@@ -223,30 +186,8 @@ import { onMounted, ref, reactive } from 'vue';
   {
     test();
   })
-  function queryDBLink(searchParams)
-  {
-    let baseURL = `https://data.cityofnewyork.us/resource/uip8-fykc.json?`
-    for(const [key, value] of Object.entries(searchParams))
-    {
-      baseURL+=`$${key}=${value}&`
-    }
-    return baseURL;
-  }
 
 </script>
 
 <style scoped>
-  .navOpt
-  {
-    width:100px;  
-    height:100px;
-    margin:10px;
-    background-color: black;
-    display:flex;
-    flex-direction:row;
-  }
-  .navBar
-  {
-    display:flex;
-  }
 </style>

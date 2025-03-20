@@ -1,46 +1,51 @@
 <template>
-    <div ref="map" style="height: 500px;"></div>
-  </template>
-  
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  import L from 'leaflet';
-  import 'leaflet.heat'; // Import leaflet.heat plugin
-  
-  const mapRef = ref(null); // The ref to the map div
-  
-  // Sample data for the heatmap (latitude, longitude, intensity)
-  const heatData = [
-    [51.505, -0.09, 0.5],
-    [51.515, -0.1, 0.6],
-    [51.525, -0.11, 0.7],
-    [51.535, -0.12, 0.8]
-  ];
-  
-  onMounted(() => {
-    console.log("failed")
+  <div id="app">
+    <div id="map" ref="map" class="map-container"></div>
+  </div>
+</template>
 
-      // Initialize the map
-      const map = L.map(mapRef.value).setView([51.505, -0.09], 13);
-      // Add a tile layer (e.g., OpenStreetMap)
+<script>
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet.heat'; // Import leaflet.heat plugin
+
+export default {
+  name: 'LeafletMap',
+  mounted() {
+    // Initialize the map
+    this.initializeMap();
+  },
+  methods: {
+    initializeMap() {
+      // Create the map object and set its initial view (latitude, longitude, zoom level)
+      const map = L.map(this.$refs.map).setView([74.0060, 40.7128], 13);
+
+      // Add OpenStreetMap tile layer
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
-  
-      // Add the heatmap layer
-      L.heatLayer(heatData, {
-        radius: 25,
-        blur: 15,
-        maxZoom: 17
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-  });
-  </script>
-  
-  <style scoped>
-  /* Styles for your map */
-  #map {
-    height: 100%;
-  }
-  </style>
-  
+      // Example data points for the heatmap (latitude, longitude, intensity)
+      const heatData = [
+        [51.505, -0.09, 1.0], // Lat, Lng, Intensity
+      ];
+
+      // Add heatmap layer to the map
+      L.heatLayer(heatData, {
+        radius: 100, // Size of the heatmap points
+        blur: 1,      // Blur intensity of the points
+        maxZoom: 15,   // Maximum zoom level for the heatmap
+      }).addTo(map);
+
+      // Optional: Add a marker to show additional interaction
+    },
+  },
+};
+</script>
+
+<style scoped>
+.map-container {
+  height: 500px; /* Set the height of the map */
+  width: 100%; /* Make the map responsive */
+}
+</style>

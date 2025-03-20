@@ -8,7 +8,7 @@
       <option value="perp_race">Sort by Race</option>
     </select>
   </form>
-  <Doughnut :v-if="loadDoughnut" :data="chartData" :options="chartOptions" :key="testKey" style="width:10%;height: 10%;"></Doughnut>
+  <Doughnut :data="chartData" :options="chartOptions" :key="testKey" style="width:10%;height: 10%;"></Doughnut>
 </template>
 
 
@@ -28,7 +28,6 @@
   const testKey = ref(0);
   const dataType = ref("");
   const offenses = {}
-  const loadDoughnut = ref(false);
   const commonData =  {
     "arrest_date": {},
     "pd_desc": "CRIMINAL POSSESSION WEAPON",
@@ -213,7 +212,6 @@
   {
     await getData();
     changeData("arrest_boro");
-    if(!loadDoughnut){return}
     
     testKey.value+=1;
   }

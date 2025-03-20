@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import ProcessData from '@/components/ProcessData.vue';
+    import ProcessData from '@/components/ProcessData.vue';
 
 
 </script>

@@ -12,12 +12,12 @@ const router = createRouter({
     {
       path: '/heatmap',
       name: 'heatmap',
-      component: () => import('../views/TimeLine.vue'),
+      component: () => import('../views/HeatMap.vue'),
     },
     {
       path: '/timeline',
-      name: 'about',
-      component: () => import('../views/HeatMap.vue'),
+      name: 'timeline',
+      component: () => import('../views/TimeLine.vue'),
     },
     {
       path: '/chartdata',
