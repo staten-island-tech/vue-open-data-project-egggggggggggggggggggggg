@@ -1,15 +1,42 @@
 <template>
-    <div class="optionsBar">
-        <div class="options" @click="$emit(`eggsandwhich`)">Heat Map</div>
-        <div class="options" @click="$emit(`ligma`)">Chart Data</div>
-        <div class="options" @click="$emit(`sigma`)">Time Line</div>
-    </div>
-    
+    <nav class="optionsBar">
+      <div class="navOpt" @click="$emit(`heatmap`,commonData)">
+        <router-link to="/heatmap">Heatmap</router-link>
+      </div>
+      <div class="navOpt" @click="$emit(`timeline`,commonData)"> 
+        <router-link to="/timeline">TimeLine</router-link>
+      </div>
+      <div class="navOpt" @click="$emit(`chartData`, commonData)">
+        <router-link to="/chartdata">ChartData</router-link>
+      </div>
+      <div class="navOpt" @click="$emit(`chartData`, commonData)">
+        <router-link to="/search">Search</router-link>
+      </div>
+    </nav>
 </template>
 
 <script setup>
 //for opt menu create 3 divs for each of th enav buttons. use those to directly redirect to the site neeed. 
 </script>
 
-<style scoped>
+<style scoped>  
+    .optionsBar
+    {
+        width:100%;
+        height:100px;
+        background:lightgreen;
+        display:flex;
+    }
+    .navOpt
+    {
+        width:100px;
+        padding:10px;
+        flex-direction: row;
+        border: black;
+        background-color: green;
+        margin: 5px;
+        align-items: center;
+    }
+
+
 </style>

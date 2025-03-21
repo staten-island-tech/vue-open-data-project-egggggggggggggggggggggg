@@ -23,6 +23,11 @@ const router = createRouter({
       path: '/chartdata',
       name: 'chartdata',
       component: () => import('../views/ChartData.vue'),
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: () => import(`../views/SearchData.vue`)
     }
   ],
 })
