@@ -20,6 +20,8 @@ const commonData =  {
     "ky_cd":{},
     "ofns_desc":{},
     "law_code":{},
+    "latitude":{},
+    "longitude":{},
   }//data to check
   function parseCrimes(pd_desc)
   {
@@ -54,7 +56,6 @@ const commonData =  {
     if(dataKey=="arrest_date")
     {
       dataVal = dataVal.split('T')[0].split('-');
-      console.log(dataVal)
       const year = `Year: ${dataVal[0]}`;
       const month =  `Month: ${dataVal[1]}`;
       const day =  `Day: ${dataVal[2]}`;
@@ -80,10 +81,11 @@ const commonData =  {
     console.log(dbLength)
     const newLink = queryDBLink(
       {
-        limit:100,
+        limit:dbLength,
       }
     )
     const newData =  await fetchData(newLink);
+    console.log("Took", performance.now()-start,"ms to fetch Data")
     newData.forEach(item=>
       {
         for(const [key,value] of Object.entries(item))
@@ -92,14 +94,14 @@ const commonData =  {
         }
       }
     )
-    console.log(`Took : ${Math.floor(performance.now()-start)}`);
+    console.log(`Took : ${Math.floor(performance.now()-start)} ms to process data`);
     console.log(commonData,offenses)
   }
+  //based on user selected category either use the initially loaded data whichj is slow to fetch or use $select to speed up calls to tyhe
   async function test()
   {
     await getData();
-    changeData("arrest_boro");
-    if(!loadDoughnut){return}
-    
-    testKey.value+=1;
   }
+  test();
+
+export { commonData, getData }

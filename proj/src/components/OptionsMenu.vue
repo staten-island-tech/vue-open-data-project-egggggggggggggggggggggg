@@ -1,42 +1,65 @@
 <template>
-    <nav class="optionsBar">
-      <div class="navOpt" @click="$emit(`heatmap`,commonData)">
-        <router-link to="/heatmap">Heatmap</router-link>
-      </div>
-      <div class="navOpt" @click="$emit(`timeline`,commonData)"> 
-        <router-link to="/timeline">TimeLine</router-link>
-      </div>
-      <div class="navOpt" @click="$emit(`chartData`, commonData)">
-        <router-link to="/chartdata">ChartData</router-link>
-      </div>
-      <div class="navOpt" @click="$emit(`chartData`, commonData)">
-        <router-link to="/search">Search</router-link>
-      </div>
-    </nav>
+  <nav class="optionsBar">
+    <router-link 
+      to="/heatmap" 
+      class="navOpt" 
+      :class="{ active: $route.path === '/heatmap' }" 
+      >
+      Heatmap
+    </router-link>
+
+    <router-link 
+      to="/timeline" 
+      class="navOpt" 
+      :class="{ active: $route.path === '/timeline' }" 
+      >
+      Timeline
+    </router-link>
+
+    <router-link 
+      to="/chartdata" 
+      class="navOpt" 
+      :class="{ active: $route.path === '/chartdata' }" 
+      >
+      Charts
+    </router-link>
+
+    <router-link 
+      to="/search" 
+      class="navOpt" 
+      :class="{ active: $route.path === '/search' }" 
+      >
+      Search
+    </router-link>
+  </nav>
 </template>
 
-<script setup>
-//for opt menu create 3 divs for each of th enav buttons. use those to directly redirect to the site neeed. 
-</script>
+<style scoped>
+.optionsBar {
+  display: flex;
+  width:100px;
+  height:50px;
+  align-items: center;
+  text-align: center;
 
-<style scoped>  
-    .optionsBar
-    {
-        width:100%;
-        height:100px;
-        background:lightgreen;
-        display:flex;
-    }
-    .navOpt
-    {
-        width:100px;
-        padding:10px;
-        flex-direction: row;
-        border: black;
-        background-color: green;
-        margin: 5px;
-        align-items: center;
-    }
+}
 
+.navOpt {
+  padding: 10px 15px;
+  text-decoration: none;
+  color: black;
+  height:100%;
+  transition: background 0.3s;
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
 
+.navOpt:hover {
+  background: lightgray;
+}
+
+.navOpt.active {
+  background: #007ACC;
+  color: white;
+  font-weight: bold;
+}
 </style>

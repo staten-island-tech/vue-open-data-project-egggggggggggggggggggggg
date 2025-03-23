@@ -5,6 +5,8 @@
 <script setup>
     import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'; 
     import { Line } from 'vue-chartjs'; ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+    import { commonData } from '../dataProcess.js'
+    import { onMounted } from 'vue'
     const lineChartData = 
     {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -20,8 +22,13 @@
         responsive: true,
         maintainAspectRatio: true
     }
-
-
+    console.log("common data", commonData)
+    onMounted(()=>
+    {
+        console.log("skibid toilet")
+    }
+    )
+    
 </script>
 
 <style scoped>

@@ -13,8 +13,16 @@
   import { onMounted, ref, reactive } from 'vue';
   import { delay, HSLtoRGB, uniqueColors, RGBtoHex, queryDBLink } from './utils.js'
   import OptionsMenu from './components/OptionsMenu.vue';
-  
-  
+  import { getData,commonData } from './dataProcess.js';
+  async function test()
+  {
+    await getData();
+    sessionStorage.setItem("data",JSON.stringify(commonData));
+    let data =  sessionStorage.getItem("data");
+    console.log(JSON.parse(data),"data here")
+    console.log("s")
+  }
+  test();
 
 </script>
 
