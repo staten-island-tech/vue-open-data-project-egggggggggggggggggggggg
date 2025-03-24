@@ -78,10 +78,10 @@ const commonData =  {
   {
     const start =  performance.now();
     const dbLength = Number((await fetchData("https://data.cityofnewyork.us/resource/uip8-fykc.json?$select=count(*)"))[0].count);
-    console.log(dbLength)
     const newLink = queryDBLink(
       {
-        limit:dbLength,
+        limit:100,
+        select:"longitude"
       }
     )
     const newData =  await fetchData(newLink);
@@ -95,13 +95,13 @@ const commonData =  {
       }
     )
     console.log(`Took : ${Math.floor(performance.now()-start)} ms to process data`);
-    console.log(commonData,offenses)
   }
+  //for something like coordinates for the heat map trim down hte precision to smwhere around 3 or 2 decimals
+
   //based on user selected category either use the initially loaded data whichj is slow to fetch or use $select to speed up calls to tyhe
   async function test()
   {
     await getData();
   }
-  test();
 
 export { commonData, getData }

@@ -10,7 +10,7 @@
     ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
     const regenerate = ref(0);
     const offenses = {}
-    const commonData =  JSON.parse(sessionStorage.getItem("data"));
+    const commonData =  JSON.parse(localStorage.getItem("data"));
     const chartData = reactive({
     labels: ['Red', 'Blue', 'Yellow','Black'],
     datasets: [
@@ -57,8 +57,7 @@
     }
     async function test()
     {
-        changeData("perp_sex");
-        console.log(commonData)
+        changeData("longitude");
         regenerate.value+=1;
     }
     onMounted(()=>
