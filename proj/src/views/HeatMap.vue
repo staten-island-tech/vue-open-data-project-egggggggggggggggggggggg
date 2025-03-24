@@ -4,43 +4,44 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { onMounted, ref } from 'vue'; // Import Vue Composition API functions
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat'; // Import leaflet.heat plugin
+let data = localStorage.getItem("data");
+console.log(JSON.parse(data))
+const map = ref(null); // Create a ref for the map container
 
-export default {
-  name: 'LeafletMap',
-  mounted() {
-    // Initialize the map
-    this.initializeMap();
-  },
-  methods: {
-    initializeMap() {
-      // Create the map object and set its initial view (latitude, longitude, zoom level)
-      const map = L.map(this.$refs.map).setView([74.0060, 40.7128], 13);
+// Function to initialize the map
+const initializeMap = () => {
+  // Create the map object and set its initial view (latitude, longitude, zoom level)
+  const leafletMap = L.map(map.value).setView([40.7128, -74.0060], 13);
 
-      // Add OpenStreetMap tile layer
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+  // Add OpenStreetMap tile layer
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(leafletMap);
 
-      // Example data points for the heatmap (latitude, longitude, intensity)
-      const heatData = [
-        [51.505, -0.09, 1.0], // Lat, Lng, Intensity
-      ];
+  // Example data points for the heatmap (latitude, longitude, intensity)
+  const heatData = [
+    [51.505, -0.09, 1.0], // Lat, Lng, Intensity
+  ];
 
-      // Add heatmap layer to the map
-      L.heatLayer(heatData, {
-        radius: 100, // Size of the heatmap points
-        blur: 1,      // Blur intensity of the points
-        maxZoom: 15,   // Maximum zoom level for the heatmap
-      }).addTo(map);
-
-      // Optional: Add a marker to show additional interaction
-    },
-  },
+  // Add heatmap layer to the map
+  L.heatLayer(heatData, {
+    radius: 100, // Size of the heatmap points
+    blur: 1,      // Blur intensity of the points
+    maxZoom: 15,   // Maximum zoom level for the heatmap
+  }).addTo(leafletMap);
 };
+
+// Lifecycle hook to run the map initialization after component is mounted
+onMounted(() => {
+
+
+  initializeMap();
+});
 </script>
 
 <style scoped>

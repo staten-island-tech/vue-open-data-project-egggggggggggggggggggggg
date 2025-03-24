@@ -30,9 +30,10 @@
     let data =  (localStorage.getItem("data"));
     console.log(JSON.parse(data),"data here");
   }
-  function clearStorage()
+  async function clearStorage()
   {
     localStorage.clear();
+    await test();
     location.reload();
   }
   

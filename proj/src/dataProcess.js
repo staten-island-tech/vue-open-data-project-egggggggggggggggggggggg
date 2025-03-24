@@ -51,8 +51,13 @@ const commonData =  {
     {
       parseCrimes(dv);
       return;
-    }
+    }//FIX THE DATES
     let dataVal = dv.toString();
+    if(dataKey=="longitude"||dataKey=="latitude")
+      {
+        console.log(dv.toString());
+        dataVal = parseFloat(parseFloat(dv).toFixed(2));
+    }
     if(dataKey=="arrest_date")
     {
       dataVal = dataVal.split('T')[0].split('-');
@@ -80,10 +85,10 @@ const commonData =  {
     const dbLength = Number((await fetchData("https://data.cityofnewyork.us/resource/uip8-fykc.json?$select=count(*)"))[0].count);
     const newLink = queryDBLink(
       {
-        limit:100,
-        select:"longitude"
+        limit:1000,
       }
-    )
+    )//for th heatmap just trim precision here
+
     const newData =  await fetchData(newLink);
     console.log("Took", performance.now()-start,"ms to fetch Data")
     newData.forEach(item=>
