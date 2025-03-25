@@ -9,37 +9,32 @@ import { onMounted, ref } from 'vue'; // Import Vue Composition API functions
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat'; // Import leaflet.heat plugin
-let data = localStorage.getItem("data");
-console.log(JSON.parse(data))
+let data = JSON.parse(localStorage.getItem("data"));
 const map = ref(null); // Create a ref for the map container
 
 // Function to initialize the map
 const initializeMap = () => {
   // Create the map object and set its initial view (latitude, longitude, zoom level)
-  const leafletMap = L.map(map.value).setView([40.7128, -74.0060], 13);
+  const leafletMap = L.map(map.value).setView([40.7128, -74.0060], 15);
 
   // Add OpenStreetMap tile layer
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(leafletMap);
 
-  // Example data points for the heatmap (latitude, longitude, intensity)
-  const heatData = [
-    [51.505, -0.09, 1.0], // Lat, Lng, Intensity
-  ];
+  // Aggregate all heat data into a single array
+  const heatData = data.coordinates.map(element => [element[1], element[0], 0.5]);
 
-  // Add heatmap layer to the map
+  // Add heatmap layer with the aggregated data
   L.heatLayer(heatData, {
-    radius: 100, // Size of the heatmap points
-    blur: 1,      // Blur intensity of the points
-    maxZoom: 15,   // Maximum zoom level for the heatmap
+    radius: 10,  // Adjust size of the heat points
+    blur: 0.1,   // Adjust blur intensity
+    maxZoom: 15, 
   }).addTo(leafletMap);
 };
 
 // Lifecycle hook to run the map initialization after component is mounted
 onMounted(() => {
-
-
   initializeMap();
 });
 </script>

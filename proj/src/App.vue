@@ -1,8 +1,17 @@
 <template>
-  <OptionsMenu></OptionsMenu>
-  <button @click="clearStorage">Clear Cache</button>
-  <router-view>
-    </router-view>
+  <div class="container">
+    <header class="top-bar">
+      <OptionsMenu /> <!-- Assuming this is a top bar menu, let it be on the right or left -->
+    </header>
+
+    <main class="content">
+      <router-view />
+    </main>
+
+    <footer class="footer">
+      <button @click="clearStorage" class="clear-cache-btn">Clear Cache</button>
+    </footer>
+  </div>
 </template>
 
 <script setup>
@@ -15,7 +24,7 @@
   import { delay, HSLtoRGB, uniqueColors, RGBtoHex, queryDBLink } from './utils.js'
   import OptionsMenu from './components/OptionsMenu.vue';
   import { getData,commonData } from './dataProcess.js';
-  const timeLimit = 60*60*24*30*1000;
+  const timeLimit = 60*60*24*30*1000;//cached data expires in a month idk if this a good idea or nah
   async function test()
   {
     if(Date.now() - (Number(localStorage.getItem("timestamp")) || 0) >= timeLimit||!localStorage.getItem("data"))
@@ -42,4 +51,58 @@
 </script>
 
 <style scoped>
+/* Container to manage layout */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Top bar style */
+.top-bar {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.top-bar .logo {
+  font-size: 24px;
+}
+
+/* Main content area */
+.content {
+  flex-grow: 1;
+  margin-top: 60px; /* Offset for fixed top bar */
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Footer style */
+.footer {
+  background-color: #f4f4f4;
+  padding: 10px 20px;
+  text-align: center;
+}
+
+/* Clear cache button */
+.clear-cache-btn {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.clear-cache-btn:hover {
+  background-color: #0056b3;
+}
 </style>

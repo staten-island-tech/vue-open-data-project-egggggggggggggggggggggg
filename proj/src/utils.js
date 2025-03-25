@@ -42,4 +42,31 @@ function queryDBLink(searchParams)
   }
   return baseURL;
 }
-export { delay, HSLtoRGB, uniqueColors, RGBtoHex, queryDBLink }
+function monthName(num)
+{
+  const date = new Date(0, num-1);
+  return date.toLocaleString('default', {month:"long"});
+}
+function cacheData(data, unique_key, expireTime)//im prob not gonna use this 
+{
+  localStorage.setItem(unique_key, data)
+  localStorage.setItem(unique_key+"expiryDate",
+    {
+      timestamp:Date.now(),
+      expiration:expireTime
+    }
+  );
+}
+function retrieveData(unique_key)//check if valid to retrieve cached data. 
+{
+  const timestuff =  JSON.parse(localStorage.getItem(unique_key+"expiryDate") )
+  if(Time.now() - timestuff.timestamp <= timestuff.expiration)
+  {
+    return "recache data"
+  }
+  else
+  {
+    return true;
+  }
+}
+export { delay, HSLtoRGB, uniqueColors, RGBtoHex, queryDBLink, monthName }

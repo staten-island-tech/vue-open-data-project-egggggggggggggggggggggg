@@ -1,9 +1,24 @@
+import { parse } from "vue/compiler-sfc";
 import { queryDBLink } from "./utils";
 
 
 const offenses = {}
 const commonData =  {
-    "arrest_date": {},
+    "arrest_date": {
+      "01":{},
+      "02":{},
+      "03":{},
+      "04":{},
+      "05":{},
+      "06":{},
+      "07":{},
+      "08":{},
+      "09":{},
+      "10":{},
+      "11":{},
+      "12":{},
+
+    },
     "pd_desc": "CRIMINAL POSSESSION WEAPON",
     "ofns_desc": "DANGEROUS WEAPONS",
     "law_cat_cd": {},
@@ -22,6 +37,7 @@ const commonData =  {
     "law_code":{},
     "latitude":{},
     "longitude":{},
+    "coordinates":[]
   }//data to check
   function parseCrimes(pd_desc)
   {
@@ -54,19 +70,20 @@ const commonData =  {
     }//FIX THE DATES
     let dataVal = dv.toString();
     if(dataKey=="longitude"||dataKey=="latitude")
-      {
-        console.log(dv.toString());
-        dataVal = parseFloat(parseFloat(dv).toFixed(2));
+    {
+      return
     }
-    if(dataKey=="arrest_date")
+    if(dataKey=="arrest_date")//no counte for crime in yr, add add
     {
       dataVal = dataVal.split('T')[0].split('-');
       const year = `Year: ${dataVal[0]}`;
-      const month =  `Month: ${dataVal[1]}`;
-      const day =  `Day: ${dataVal[2]}`;
-      commonData[dataKey][year] = (commonData[dataKey][year] || 0) + 1;
-      commonData[dataKey][month] = (commonData[dataKey][month] || 0) + 1;
-      commonData[dataKey][day] = (commonData[dataKey][day] || 0) + 1;
+      const month =  `${dataVal[1]}`;
+      const day =  `${dataVal[2]}`;
+      if(!commonData[dataKey][month])
+      {
+        commonData[dataKey][month] = {};
+      }
+      commonData[dataKey][month][day] = (commonData[dataKey][month][day] || 0) + 1;
       return;
     }
     if(dataKey=="arrest_key"){return}
@@ -85,17 +102,27 @@ const commonData =  {
     const dbLength = Number((await fetchData("https://data.cityofnewyork.us/resource/uip8-fykc.json?$select=count(*)"))[0].count);
     const newLink = queryDBLink(
       {
-        limit:1000,
+        limit:dbLength,
       }
     )//for th heatmap just trim precision here
-
+    const heatMapData= new Map();
     const newData =  await fetchData(newLink);
     console.log("Took", performance.now()-start,"ms to fetch Data")
     newData.forEach(item=>
       {
+        const long = parseFloat(parseFloat(item.longitude).toFixed(4));
+        const lat = parseFloat(parseFloat(item.latitude).toFixed(4));
+        if (lat !== null && long !== null && lat !== 0 && long !== 0 && !isNaN(lat) && !isNaN(long))
+        {
+          const coordinates = [long,lat];
+          commonData.coordinates.push(coordinates);
+        }
         for(const [key,value] of Object.entries(item))
         {
-          commonDataCondense(key, value)
+          if(key!="longitude"||key!="latitude")
+          {
+            commonDataCondense(key, value)
+          }        
         }
       }
     )
