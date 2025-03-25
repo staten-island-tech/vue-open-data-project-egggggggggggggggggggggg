@@ -35,8 +35,6 @@ const commonData =  {
     "ky_cd":{},
     "ofns_desc":{},
     "law_code":{},
-    "latitude":{},
-    "longitude":{},
     "coordinates":[]
   }//data to check
   function parseCrimes(pd_desc)

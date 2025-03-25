@@ -1,6 +1,8 @@
 <template>
     <Line :data="lineChartData" :options="lineChartOptions" :key="chartKey"></Line>
-    <button>Month</button>
+    <button @click="sortOneMonth(`03`)">Individual Month</button>
+    <button @click="displayMonthData">Whole year</button>
+    <input>
 </template>
     
 <script setup>
@@ -49,6 +51,7 @@
     }
     function sortOneMonth(month)
     {
+        console.log(month);
         lineChartData.labels = Object.keys(data.arrest_date[month]);
         lineChartData.datasets[0].data = Object.values(data.arrest_date[month]) 
         chartKey.value++;

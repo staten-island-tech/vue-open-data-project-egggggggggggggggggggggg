@@ -69,4 +69,10 @@ function retrieveData(unique_key)//check if valid to retrieve cached data.
     return true;
   }
 }
-export { delay, HSLtoRGB, uniqueColors, RGBtoHex, queryDBLink, monthName }
+async function fetchData(url)
+{
+  const newLink = await fetch(url);
+  const jData =  await newLink.json();
+  return jData;
+}
+export { delay, HSLtoRGB, uniqueColors, RGBtoHex, queryDBLink, monthName, fetchData }

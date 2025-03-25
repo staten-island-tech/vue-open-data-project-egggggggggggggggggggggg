@@ -23,12 +23,12 @@ const initializeMap = () => {
   }).addTo(leafletMap);
 
   // Aggregate all heat data into a single array
-  const heatData = data.coordinates.map(element => [element[1], element[0], 0.5]);
+  const heatData = data.coordinates.map(element => [element[1], element[0], 0.1]);
 
   // Add heatmap layer with the aggregated data
   L.heatLayer(heatData, {
     radius: 10,  // Adjust size of the heat points
-    blur: 0.1,   // Adjust blur intensity
+    blur: 1.0,   // Adjust blur intensity
     maxZoom: 15, 
   }).addTo(leafletMap);
 };
