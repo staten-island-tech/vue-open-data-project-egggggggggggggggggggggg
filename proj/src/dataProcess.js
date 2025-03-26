@@ -19,7 +19,6 @@ const commonData =  {
       "12":{},
 
     },
-    "pd_desc": "CRIMINAL POSSESSION WEAPON",
     "ofns_desc": "DANGEROUS WEAPONS",
     "law_cat_cd": {},
     "arrest_boro": {},
@@ -27,45 +26,18 @@ const commonData =  {
     "perp_sex": {},
     "perp_race": {},
     "arrest_date":{},
-    "pd_desc":{},
     "ofns_desc":{},
     "coordinates":[]
-  }//data to check
-  function parseCrimes(pd_desc)
-  {
-    pd_desc.split(",").forEach(
-      crime=>
-      {
-        if(!offenses[crime])
-        {
-          offenses[crime] = 1;
-          return;
-        }
-        else
-        {
-          offenses[crime] += 1;
-        }
-      }
-    )
   }
-  function commonDataCondense(dk , dv) //anything without a comma=valide
+  function commonDataCondense(dk , dv)
   {
     const dataKey = dk.toString();
     if(!commonData[dataKey])
     {
       return
     }
-    if(dataKey=="pd_desc")
-    {
-      parseCrimes(dv);
-      return;
-    }//FIX THE DATES
     let dataVal = dv.toString();
-    if(dataKey=="longitude"||dataKey=="latitude")
-    {
-      return
-    }
-    if(dataKey=="arrest_date")//no counte for crime in yr, add add
+    if(dataKey=="arrest_date")
     {
       dataVal = dataVal.split('T')[0].split('-');
       const year = `Year: ${dataVal[0]}`;
@@ -78,7 +50,6 @@ const commonData =  {
       commonData[dataKey][month][day] = (commonData[dataKey][month][day] || 0) + 1;
       return;
     }
-    if(dataKey=="arrest_key"){return}
     commonData[dataKey][dataVal] = (commonData[dataKey][dataVal] || 0) + 1;
   }
   async function fetchData(url)
@@ -96,7 +67,7 @@ const commonData =  {
       {
         limit:dbLength,
       }
-    )//for th heatmap just trim precision here
+    )
     const heatMapData= new Map();
     const newData =  await fetchData(newLink);
     console.log("Took", performance.now()-start,"ms to fetch Data")
@@ -111,21 +82,10 @@ const commonData =  {
         }
         for(const [key,value] of Object.entries(item))
         {
-          if(key!="longitude"||key!="latitude")
-          {
-            commonDataCondense(key, value)
-          }        
+          commonDataCondense(key, value)       
         }
       }
     )
     console.log(`Took : ${Math.floor(performance.now()-start)} ms to process data`);
   }
-  //for something like coordinates for the heat map trim down hte precision to smwhere around 3 or 2 decimals
-
-  //based on user selected category either use the initially loaded data whichj is slow to fetch or use $select to speed up calls to tyhe
-  async function test()
-  {
-    await getData();
-  }
-
 export { commonData, getData }

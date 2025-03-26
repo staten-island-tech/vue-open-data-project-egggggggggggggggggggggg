@@ -1,22 +1,21 @@
 <template>
-    <Doughnut :options="chartOptions" :data="chartData" :key="regenerate"></Doughnut>
-    <form class="selector" @submit.prevent @change="changeData(option)">
-        <select id="dropdownMenu" default="arrest_boro" v-model="option">
-            <option>pd_desc</option>
-            <option>ofns_desc</option>
-            <option>law_cat_cd</option>
-            <option>arrest_boro</option>
-            <option>age_group</option>
-            <option>perp_sex</option>
-            <option>perp_race</option>
-            <option>arrest_date</option>
+    <div class="container">
+        <Doughnut :options="chartOptions" :data="chartData" :key="regenerate"></Doughnut>
+        <form class="selector" @submit.prevent @change="changeData(option)">
+        <select id="dropdownMenu" v-model="option">
+            <option value="ofns_desc">Crime Type</option>
+            <option value="law_cat_cd">Sort by Crime Severity</option>
+            <option value="arrest_boro">Sort by Arrest Boro</option>
+            <option value="age_group">Sort by Age Group</option>
+            <option value="perp_sex">Sort by Sex</option>
+            <option value="perp_race">Sort by Race</option>
         </select>
     </form>
+    </div>
 
 </template>
 
 <script setup>
-    //semi done just add some css and stuff make it look better
     import { onMounted, ref, reactive } from 'vue';
     import { Doughnut } from 'vue-chartjs';
     import { uniqueColors } from '@/utils';
@@ -55,16 +54,6 @@
     });
     function changeData(dType)
     {
-        //implement some sort of data changing thingie majingie here based on data type
-        if(dType=="arrest_date")
-        {
-        
-        }
-        else if(dType=="")
-        {
-        
-        }
-        console.log(dType)
         const data = Object.values(commonData[dType]);
         const labels = Object.keys(commonData[dType]);  
         chartData.datasets[0].data = data;
@@ -72,18 +61,41 @@
         chartData.datasets[0].backgroundColor = uniqueColors(data.length);
         regenerate.value+=1;
     }
-    async function test()
-    {
-        changeData("arrest_boro");
-    }
 
     onMounted(()=>
     {
-        test();
+        changeData("arrest_boro");
     })
     
 </script>
 
 <style scoped>
-
+    .container {
+        padding: 20px;
+        height:100%;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .selector {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+    #dropdownMenu {
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        transition: border 0.3s ease, box-shadow 0.3s ease;
+    }
+    #dropdownMenu option {
+        padding: 10px;
+        font-size: 16px;
+    }
 </style>

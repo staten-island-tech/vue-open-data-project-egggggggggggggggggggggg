@@ -75,4 +75,4 @@ async function fetchData(url)
   const jData =  await newLink.json();
   return jData;
 }
-export { delay, HSLtoRGB, uniqueColors, RGBtoHex, queryDBLink, monthName, fetchData }
+export { delay, HSLtoRGB, uniqueColors, RGBtoHex, queryDBLink, fetchData }
