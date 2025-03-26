@@ -23,14 +23,6 @@
       >
       Charts
     </router-link>
-
-    <router-link 
-      to="/search" 
-      class="navOpt" 
-      :class="{ active: $route.path === '/search' }" 
-      >
-      Search
-    </router-link>
   </nav>
 </template>
 
@@ -38,10 +30,10 @@
 .optionsBar {
   display: flex;
   width:100px;
-  height:50px;
+  height:30px;
   align-items: center;
   text-align: center;
-
+  
 }
 
 .navOpt {
@@ -51,6 +43,10 @@
   height:100%;
   transition: background 0.3s;
   font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .navOpt:hover {
