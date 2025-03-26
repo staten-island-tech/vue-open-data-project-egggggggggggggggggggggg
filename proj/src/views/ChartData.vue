@@ -2,20 +2,14 @@
     <Doughnut :options="chartOptions" :data="chartData" :key="regenerate"></Doughnut>
     <form class="selector" @submit.prevent @change="changeData(option)">
         <select id="dropdownMenu" default="arrest_boro" v-model="option">
-            <option @click="changeData('pd_desc')">pd_desc</option>
-            <option @click="changeData('ofns_desc')">ofns_desc</option>
-            <option @click="changeData('law_cat_cd')">law_cat_cd</option>
-            <option @click="changeData('arrest_boro')">arrest_boro</option>
-            <option @click="changeData('arrest_precinct')">arrest_precinct</option>
-            <option @click="changeData('jurisdiction_code')">jurisdiction_code</option>
-            <option @click="changeData('age_group')">age_group</option>
-            <option @click="changeData('perp_sex')">perp_sex</option>
-            <option @click="changeData('perp_race')">perp_race</option>
-            <option @click="changeData('arrest_key')">arrest_key</option>
-            <option @click="changeData('arrest_date')">arrest_date</option>
-            <option @click="changeData('pd_cd')">pd_cd</option>
-            <option @click="changeData('ky_cd')">ky_cd</option>
-            <option @click="changeData('law_code')">law_code</option>
+            <option>pd_desc</option>
+            <option>ofns_desc</option>
+            <option>law_cat_cd</option>
+            <option>arrest_boro</option>
+            <option>age_group</option>
+            <option>perp_sex</option>
+            <option>perp_race</option>
+            <option>arrest_date</option>
         </select>
     </form>
 

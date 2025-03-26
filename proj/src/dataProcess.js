@@ -23,18 +23,12 @@ const commonData =  {
     "ofns_desc": "DANGEROUS WEAPONS",
     "law_cat_cd": {},
     "arrest_boro": {},
-    "arrest_precinct": {},
-    "jurisdiction_code": {},
     "age_group": {},
     "perp_sex": {},
     "perp_race": {},
-    "arrest_key": {},
     "arrest_date":{},
-    "pd_cd":{},
     "pd_desc":{},
-    "ky_cd":{},
     "ofns_desc":{},
-    "law_code":{},
     "coordinates":[]
   }//data to check
   function parseCrimes(pd_desc)
